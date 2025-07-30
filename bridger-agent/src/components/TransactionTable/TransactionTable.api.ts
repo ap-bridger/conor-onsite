@@ -15,6 +15,51 @@ export const TRANSACTIONS = gql(`
     }
 `);
 
+export const AUTOCATEGORIZED_TRANSACTIONS = gql(`
+    query AutocategorizedTransactions {
+        transactions(status: "AUTOCATEGORIZED") {
+            id
+            date
+            description
+            vendor
+            category
+            amountCents
+            status
+            memo
+        }
+    }
+`);
+
+export const SYNCED_TRANSACTIONS = gql(`
+    query SyncedTransactions {
+        transactions(statuses: ["APPROVED", "EXCLUDED"]) {
+            id
+            date
+            description
+            vendor
+            category
+            amountCents
+            status
+            memo
+        }
+    }
+`);
+
+export const NEEDS_ACTION_TRANSACTIONS = gql(`
+    query NeedsActionTransactions {
+        transactions(statuses: ["NEEDS_TO_BE_SENT_TO_CLIENT", "SENT_TO_CLIENT"]) {
+            id
+            date
+            description
+            vendor
+            category
+            amountCents
+            status
+            memo
+        }
+    }
+`);
+
 export const SEND_INFO_REQUEST = gql(`
     mutation SendInfoRequest($ids: [String!]!) {
         sendInfoRequest(ids: $ids) {
