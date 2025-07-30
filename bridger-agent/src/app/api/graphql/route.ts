@@ -17,7 +17,7 @@ const { handleRequest } = createYoga({
       }
       type Query {
         greetings: String
-        transactions(state: String!): [Transaction!]!
+        transactions(status: String!): [Transaction!]!
       }
     `,
     resolvers: {
