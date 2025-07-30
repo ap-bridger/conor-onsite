@@ -184,12 +184,10 @@ export function TransactionTable() {
               resize="none"
               rows={1}
               minHeight="32px"
-              style={{
-                backgroundColor: 'transparent',
-                border: '1px solid transparent',
-                _hover: { borderColor: '#e2e8f0' },
-                _focus: { borderColor: '#3182ce', backgroundColor: 'white' }
-              }}
+              backgroundColor="transparent"
+              border="1px solid transparent"
+              _hover={{ borderColor: 'brand.lightGrey' }}
+              _focus={{ borderColor: 'brand.blue', backgroundColor: 'brand.white' }}
             />
           </div>
         );
