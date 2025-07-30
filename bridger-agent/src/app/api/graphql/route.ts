@@ -7,7 +7,8 @@ import {
   updateTransactionMemo,
   sendInfoRequest,
   getUniqueVendors,
-  getUniqueCategories
+  getUniqueCategories,
+  runPredictions,
 } from "@/server/modules/transactions/api";
 import { createSchema, createYoga } from "graphql-yoga";
 
@@ -55,6 +56,7 @@ const { handleRequest } = createYoga({
         updateTransactionStatus(id: String!, status: String!): MutationResponse!
         updateTransactionMemo(id: String!, memo: String): MutationResponse!
         sendInfoRequest(ids: [String!]!): [Transaction!]!
+        runPredictions: [Transaction!]!
       }
     `,
     resolvers: {
@@ -70,6 +72,7 @@ const { handleRequest } = createYoga({
         updateTransactionStatus,
         updateTransactionMemo,
         sendInfoRequest,
+        runPredictions,
       },
     },
   }),
