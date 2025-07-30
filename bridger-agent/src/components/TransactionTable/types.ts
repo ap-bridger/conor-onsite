@@ -5,5 +5,6 @@ export interface Transaction {
   vendor: string;
   category: string;
   amountCents: number; // Negative for expenses, positive for income
+  status: string;
   memo: string;
 }
