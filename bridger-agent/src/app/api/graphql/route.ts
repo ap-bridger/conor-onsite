@@ -5,6 +5,13 @@ import { createSchema, createYoga } from "graphql-yoga";
 const { handleRequest } = createYoga({
   schema: createSchema({
     typeDefs: /* GraphQL */ `
+      # Valid status values:
+      # - NEEDS_TO_BE_SENT_TO_CLIENT
+      # - APPROVED
+      # - EXCLUDED
+      # - AUTOCATEGORIZED
+      # - SENT_TO_CLIENT
+      
       type Transaction {
         id: String!
         date: String!
@@ -15,6 +22,7 @@ const { handleRequest } = createYoga({
         category: String
         vendor: String
       }
+      
       type Query {
         greetings: String
         transactions(status: String!): [Transaction!]!
@@ -31,7 +39,7 @@ const { handleRequest } = createYoga({
   // While using Next.js file convention for routing, we need to configure Yoga to use the correct endpoint
   graphqlEndpoint: "/api/graphql",
 
-  // Yoga needs to know how to create a valid Next response
+  // Yoga needs to know how to create a valid Next.js response
   fetchAPI: { Response },
 });
 
