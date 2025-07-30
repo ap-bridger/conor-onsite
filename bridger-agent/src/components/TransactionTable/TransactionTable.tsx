@@ -1,64 +1,26 @@
 "use client";
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { DataTable } from '@/components/Table/DataTable.component';
+import { FilterableDropdown } from '@/components/FilterableDropdown/FilterableDropdown';
 import { Transaction } from './types';
+import { CATEGORIES, VENDORS, SAMPLE_TRANSACTIONS } from './TempData';
 
 const columnHelper = createColumnHelper<Transaction>();
 
-// Sample data for testing
-const sampleData: Transaction[] = [
-  {
-    id: '1',
-    date: new Date('2024-01-15'),
-    description: 'Office Supplies',
-    vendor: 'Staples',
-    category: 'Office',
-    amount: -125.50,
-    comment: ''
-  },
-  {
-    id: '2',
-    date: new Date('2024-01-16'),
-    description: 'Client Payment',
-    vendor: 'ABC Corp',
-    category: 'Income',
-    amount: 5000.00,
-    comment: ''
-  },
-  {
-    id: '3',
-    date: new Date('2024-01-17'),
-    description: 'Software Subscription',
-    vendor: 'Adobe',
-    category: 'Software',
-    amount: -59.99,
-    comment: ''
-  },
-  {
-    id: '4',
-    date: new Date('2024-01-18'),
-    description: 'Business Lunch',
-    vendor: 'The Local Cafe',
-    category: 'Meals',
-    amount: -45.75,
-    comment: ''
-  },
-  {
-    id: '5',
-    date: new Date('2024-01-19'),
-    description: 'Consulting Fee',
-    vendor: 'XYZ Partners',
-    category: 'Income',
-    amount: 2500.00,
-    comment: ''
-  }
-];
-
 export function TransactionTable() {
-  // TODO: Vendor and Category columns will be dropdowns in the future
-  // This functionality is not implemented yet
+  const [data, setData] = useState<Transaction[]>(SAMPLE_TRANSACTIONS);
+
+  // Update function for when dropdown values change
+  const updateTransaction = (id: string, field: keyof Transaction, value: any) => {
+    setData(data.map(transaction => 
+      transaction.id === id 
+        ? { ...transaction, [field]: value }
+        : transaction
+    ));
+  };
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('date', {
@@ -75,11 +37,41 @@ export function TransactionTable() {
       }),
       columnHelper.accessor('vendor', {
         header: 'Vendor',
-        cell: info => info.getValue(),
+        cell: ({ row, getValue }) => {
+          const value = getValue();
+          return (
+            <div onClick={(e) => e.stopPropagation()}>
+              <FilterableDropdown
+                label=""
+                placeholderText="Select vendor"
+                selectedText={value}
+                options={VENDORS}
+                onSelect={(newValue) => {
+                  updateTransaction(row.original.id, 'vendor', newValue);
+                }}
+              />
+            </div>
+          );
+        },
       }),
       columnHelper.accessor('category', {
         header: 'Category',
-        cell: info => info.getValue(),
+        cell: ({ row, getValue }) => {
+          const value = getValue();
+          return (
+            <div onClick={(e) => e.stopPropagation()}>
+              <FilterableDropdown
+                label=""
+                placeholderText="Select category"
+                selectedText={value}
+                options={CATEGORIES}
+                onSelect={(newValue) => {
+                  updateTransaction(row.original.id, 'category', newValue);
+                }}
+              />
+            </div>
+          );
+        },
       }),
       columnHelper.accessor('amount', {
         header: 'Amount',
@@ -101,7 +93,7 @@ export function TransactionTable() {
     <div className="w-full">
       <h2 className="text-2xl font-bold mb-4">Transactions</h2>
       <DataTable
-        data={sampleData}
+        data={data}
         columns={columns}
       />
     </div>
