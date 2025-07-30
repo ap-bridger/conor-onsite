@@ -10,11 +10,12 @@ import {
   GET_UNIQUE_VENDORS, 
   GET_UNIQUE_CATEGORIES,
   UPDATE_TRANSACTION_VENDOR,
-  UPDATE_TRANSACTION_CATEGORY
+  UPDATE_TRANSACTION_CATEGORY,
+  UPDATE_TRANSACTION_MEMO
 } from "./TransactionTable.api";
 import { FilterableDropdown, FilterableDisplayElement } from "../FilterableDropdown/FilterableDropdown";
 import { RequestInfoModal } from "./RequestInfoModal";
-import { Button } from "@chakra-ui/react";
+import { Button, Textarea } from "@chakra-ui/react";
 import { formatCentsToDollars } from "@/lib/formatters";
 
 const columnHelper = createColumnHelper<Transaction>();
@@ -56,6 +57,20 @@ export function TransactionTable() {
           __typename: 'Transaction',
           id,
           category
+        }
+      }
+    })
+  });
+
+  const [updateMemo] = useMutation(UPDATE_TRANSACTION_MEMO, {
+    optimisticResponse: ({ id, memo }) => ({
+      updateTransactionMemo: {
+        success: true,
+        message: 'Memo updated successfully',
+        transaction: {
+          __typename: 'Transaction',
+          id,
+          memo
         }
       }
     })
@@ -147,9 +162,40 @@ export function TransactionTable() {
     }),
     columnHelper.accessor("memo", {
       header: "Memo",
-      cell: (info) => info.getValue(),
+      cell: ({ row, getValue }) => {
+        const currentValue = getValue() || '';
+        
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Textarea
+              defaultValue={currentValue}
+              onBlur={(e) => {
+                if (e.target.value !== currentValue) {
+                  updateMemo({
+                    variables: {
+                      id: row.original.id,
+                      memo: e.target.value
+                    }
+                  });
+                }
+              }}
+              placeholder="Add memo..."
+              size="sm"
+              resize="none"
+              rows={1}
+              minHeight="32px"
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid transparent',
+                _hover: { borderColor: '#e2e8f0' },
+                _focus: { borderColor: '#3182ce', backgroundColor: 'white' }
+              }}
+            />
+          </div>
+        );
+      }
     }),
-  ], [vendors, categories]);
+  ], [vendors, categories, updateVendor, updateCategory, updateMemo]);
 
   return (
     <div className="w-full">

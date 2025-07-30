@@ -4,6 +4,7 @@ import {
   updateTransactionVendor,
   updateTransactionCategory,
   updateTransactionStatus,
+  updateTransactionMemo,
   sendInfoRequest,
   getUniqueVendors,
   getUniqueCategories
@@ -51,6 +52,7 @@ const { handleRequest } = createYoga({
           category: String!
         ): MutationResponse!
         updateTransactionStatus(id: String!, status: String!): MutationResponse!
+        updateTransactionMemo(id: String!, memo: String): MutationResponse!
         sendInfoRequest(ids: [String!]!): [Transaction!]!
       }
     `,
@@ -65,6 +67,7 @@ const { handleRequest } = createYoga({
         updateTransactionVendor,
         updateTransactionCategory,
         updateTransactionStatus,
+        updateTransactionMemo,
         sendInfoRequest,
       },
     },

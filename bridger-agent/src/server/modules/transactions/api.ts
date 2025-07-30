@@ -174,3 +174,25 @@ export const getUniqueCategories = async () => {
     throw new Error('Failed to fetch unique categories');
   }
 };
+
+export const updateTransactionMemo = async (_: any, { id, memo }: { id: string; memo: string | null }) => {
+  try {
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: { memo },
+    });
+    
+    return {
+      success: true,
+      message: 'Memo updated successfully',
+      transaction,
+    };
+  } catch (error) {
+    console.error('Error updating transaction memo:', error);
+    return {
+      success: false,
+      message: 'Failed to update memo',
+      transaction: null,
+    };
+  }
+};
