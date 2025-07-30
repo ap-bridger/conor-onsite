@@ -133,3 +133,11 @@ export const UPDATE_TRANSACTION_MEMO = gql`
     }
   }
 `;
+
+export const RUN_PREDICTIONS = gql(/* GraphQL */ `
+  mutation RunPredictions {
+    runPredictions {
+      id
+    }
+  }
+`);
