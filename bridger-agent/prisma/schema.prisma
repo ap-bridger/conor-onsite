@@ -17,8 +17,7 @@ model Transaction {
   description   String
   vendor        String
   category      String
-  spentCents    Int
-  receivedCents Int
+  amountCents   Int
   status        String
-  comment       String
+  memo          String
 }
