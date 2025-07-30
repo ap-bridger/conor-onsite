@@ -42,6 +42,7 @@ export function DataTable<TData extends object>({
   data,
   columns,
   sortingProps,
+  isLoading,
   rowSubComponent,
   onRowSelectionChange,
   onRowExpandedChange,
@@ -114,6 +115,7 @@ export function DataTable<TData extends object>({
       </thead>
       <DataTableBody
         table={table}
+        isLoading={isLoading}
         rowSubComponent={rowSubComponent}
         onRowClick={onRowClick}
         onRowExpandedChange={onRowExpandedChange}
