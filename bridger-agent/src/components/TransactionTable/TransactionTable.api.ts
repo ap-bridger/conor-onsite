@@ -105,3 +105,16 @@ export const UPDATE_TRANSACTION_CATEGORY = gql`
     }
   }
 `;
+
+export const UPDATE_TRANSACTION_MEMO = gql`
+  mutation UpdateTransactionMemo($id: String!, $memo: String) {
+    updateTransactionMemo(id: $id, memo: $memo) {
+      success
+      message
+      transaction {
+        id
+        memo
+      }
+    }
+  }
+`;
