@@ -1,9 +1,12 @@
 import { prisma } from "@/lib/db";
 
-export const transactions = async (_: any, { status, statuses }: { status?: string; statuses?: string[] }) => {
+export const transactions = async (
+  _: any,
+  { status, statuses }: { status?: string; statuses?: string[] }
+) => {
   try {
     let whereClause: any = {};
-    
+
     if (statuses && statuses.length > 0) {
       whereClause.status = { in: statuses };
     } else if (status) {
@@ -156,13 +159,13 @@ export const getUniqueVendors = async () => {
   try {
     const vendors = await prisma.transaction.findMany({
       select: { vendor: true },
-      distinct: ['vendor'],
-      orderBy: { vendor: 'asc' }
+      distinct: ["vendor"],
+      orderBy: { vendor: "asc" },
     });
-    return vendors.map(v => v.vendor);
+    return vendors.map((v) => v.vendor);
   } catch (error) {
-    console.error('Error fetching unique vendors:', error);
-    throw new Error('Failed to fetch unique vendors');
+    console.error("Error fetching unique vendors:", error);
+    throw new Error("Failed to fetch unique vendors");
   }
 };
 
@@ -171,34 +174,56 @@ export const getUniqueCategories = async () => {
   try {
     const categories = await prisma.transaction.findMany({
       select: { category: true },
-      distinct: ['category'],
-      orderBy: { category: 'asc' }
+      distinct: ["category"],
+      orderBy: { category: "asc" },
     });
-    return categories.map(c => c.category);
+    return categories.map((c) => c.category);
   } catch (error) {
-    console.error('Error fetching unique categories:', error);
-    throw new Error('Failed to fetch unique categories');
+    console.error("Error fetching unique categories:", error);
+    throw new Error("Failed to fetch unique categories");
   }
 };
 
-export const updateTransactionMemo = async (_: any, { id, memo }: { id: string; memo: string | null }) => {
+export const updateTransactionMemo = async (
+  _: any,
+  { id, memo }: { id: string; memo: string | null }
+) => {
   try {
     const transaction = await prisma.transaction.update({
       where: { id },
       data: { memo },
     });
-    
+
     return {
       success: true,
-      message: 'Memo updated successfully',
+      message: "Memo updated successfully",
       transaction,
     };
   } catch (error) {
-    console.error('Error updating transaction memo:', error);
+    console.error("Error updating transaction memo:", error);
     return {
       success: false,
-      message: 'Failed to update memo',
+      message: "Failed to update memo",
       transaction: null,
     };
   }
+};
+
+export const runPredictions = async () => {
+  const transactions = await prisma.transaction.findMany();
+  const uncategorized = transactions.filter((t) => t.status == "UNCATEGORIZED");
+  const approved = transactions.filter((t) => t.status == "APPROVED");
+  const response = await fetch("http://localhost:8000/predict", {
+    method: "POST",
+    headers: {
+      "Content-Type": "applications/json",
+    },
+    body: JSON.stringify({
+      approved,
+      uncategorized,
+    }),
+  });
+  console.log("GOT RESPONSE:", response);
+  // TODO: Write responses back to db
+  return [];
 };
