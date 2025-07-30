@@ -7,16 +7,10 @@ import { useQuery } from "@apollo/client";
 import { TRANSACTIONS } from "./TransactionTable.api";
 import { FilterableDropdown } from "../FilterableDropdown/FilterableDropdown";
 import { CATEGORIES, VENDORS } from "./TempData";
-
-const numberFormat = Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-export const formatCentsToDollars = (amountCents: number): string => {
-  return numberFormat.format(amountCents / 100);
-};
+import { useState } from "react";
+import { RequestInfoModal } from "./RequestInfoModal";
+import { Button } from "@chakra-ui/react";
+import { formatCentsToDollars } from "@/lib/formatters";
 
 const columnHelper = createColumnHelper<Transaction>();
 const columns = [
@@ -85,6 +79,7 @@ const columns = [
 ];
 
 export function TransactionTable() {
+  const [modalOpen, setModalOpen] = useState(false);
   const { data } = useQuery(TRANSACTIONS, {
     variables: {
       status: "APPROVED",
@@ -94,6 +89,11 @@ export function TransactionTable() {
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold mb-4">Transactions</h2>
+      <RequestInfoModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+      <Button onClick={() => setModalOpen(true)}>Send Info Request</Button>
       <DataTable data={transactions} columns={columns} />
     </div>
   );
