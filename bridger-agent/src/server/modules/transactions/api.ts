@@ -1,11 +1,17 @@
 import { prisma } from "@/lib/db";
 
-export const transactions = async (_: any, { status }: { status: string }) => {
+export const transactions = async (_: any, { status, statuses }: { status?: string; statuses?: string[] }) => {
   try {
+    let whereClause: any = {};
+    
+    if (statuses && statuses.length > 0) {
+      whereClause.status = { in: statuses };
+    } else if (status) {
+      whereClause.status = status;
+    }
+
     const transactions = await prisma.transaction.findMany({
-      where: {
-        status: status,
-      },
+      where: whereClause,
       orderBy: {
         date: "desc",
       },

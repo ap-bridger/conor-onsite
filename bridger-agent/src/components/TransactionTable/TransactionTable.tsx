@@ -6,7 +6,10 @@ import { DataTable } from "@/components/Table/DataTable.component";
 import { Transaction } from "./types";
 import { useQuery, useMutation } from "@apollo/client";
 import { 
-  TRANSACTIONS, 
+  TRANSACTIONS,
+  AUTOCATEGORIZED_TRANSACTIONS,
+  SYNCED_TRANSACTIONS,
+  NEEDS_ACTION_TRANSACTIONS,
   GET_UNIQUE_VENDORS, 
   GET_UNIQUE_CATEGORIES,
   UPDATE_TRANSACTION_VENDOR,
@@ -26,30 +29,17 @@ export function TransactionTable() {
   const [currentView, setCurrentView] = useState<TableView>("autocategorized");
 
   // Query for AutoCategorized transactions
-  const { data: autocategorizedData, loading: autocategorizedLoading } = useQuery(TRANSACTIONS, {
-    variables: { status: "AUTOCATEGORIZED" },
+  const { data: autocategorizedData, loading: autocategorizedLoading } = useQuery(AUTOCATEGORIZED_TRANSACTIONS, {
     skip: currentView !== "autocategorized",
   });
 
   // Query for Synced transactions (APPROVED and EXCLUDED)
-  const { data: approvedData, loading: approvedLoading } = useQuery(TRANSACTIONS, {
-    variables: { status: "APPROVED" },
-    skip: currentView !== "synced",
-  });
-
-  const { data: excludedData, loading: excludedLoading } = useQuery(TRANSACTIONS, {
-    variables: { status: "EXCLUDED" },
+  const { data: syncedData, loading: syncedLoading } = useQuery(SYNCED_TRANSACTIONS, {
     skip: currentView !== "synced",
   });
 
   // Query for Needs Client Action transactions
-  const { data: needsActionData, loading: needsActionLoading } = useQuery(TRANSACTIONS, {
-    variables: { status: "NEEDS_TO_BE_SENT_TO_CLIENT" },
-    skip: currentView !== "needsAction",
-  });
-
-  const { data: sentToClientData, loading: sentToClientLoading } = useQuery(TRANSACTIONS, {
-    variables: { status: "SENT_TO_CLIENT" },
+  const { data: needsActionData, loading: needsActionLoading } = useQuery(NEEDS_ACTION_TRANSACTIONS, {
     skip: currentView !== "needsAction",
   });
 
@@ -109,13 +99,9 @@ export function TransactionTable() {
       case "autocategorized":
         return autocategorizedData?.transactions || [];
       case "synced":
-        const approved = approvedData?.transactions || [];
-        const excluded = excludedData?.transactions || [];
-        return [...approved, ...excluded];
+        return syncedData?.transactions || [];
       case "needsAction":
-        const needsAction = needsActionData?.transactions || [];
-        const sentToClient = sentToClientData?.transactions || [];
-        return [...needsAction, ...sentToClient];
+        return needsActionData?.transactions || [];
       default:
         return [];
     }
@@ -126,9 +112,9 @@ export function TransactionTable() {
       case "autocategorized":
         return autocategorizedLoading;
       case "synced":
-        return approvedLoading || excludedLoading;
+        return syncedLoading;
       case "needsAction":
-        return needsActionLoading || sentToClientLoading;
+        return needsActionLoading;
       default:
         return false;
     }
