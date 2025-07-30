@@ -1,6 +1,7 @@
 import { Row, type Table as TableType } from "@tanstack/react-table";
 import { type RowSubComponent } from "./DataTable.component";
 import { DataTableCell } from "./DataTableCell.component";
+import { Skeleton } from "@chakra-ui/react";
 
 type DataTableBodyProps<TData> = {
   table: TableType<TData>;
@@ -13,11 +14,31 @@ type DataTableBodyProps<TData> = {
 
 export function DataTableBody<TData>({
   table,
+  isLoading,
   rowSubComponent,
   onRowExpandedChange,
   onRowClick,
 }: DataTableBodyProps<TData>) {
   const rows = table.getRowModel().rows;
+  const columnCount = table.getAllColumns().length;
+
+  // Show skeleton rows when loading
+  if (isLoading) {
+    return (
+      <tbody>
+        {[...Array(8)].map((_, index) => (
+          <tr key={`skeleton-${index}`}>
+            {[...Array(columnCount)].map((_, colIndex) => (
+              <td key={`skeleton-${index}-${colIndex}`} className="p-2">
+                <Skeleton height="20px" />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    );
+  }
+
   return (
     <tbody>
       {rows.map((row) => (

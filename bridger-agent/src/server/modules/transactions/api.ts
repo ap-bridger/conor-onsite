@@ -144,3 +144,33 @@ export const sendInfoRequest = async (_: any, { ids }: { ids: string[] }) => {
   });
   return results;
 };
+
+// Get unique vendors from database
+export const getUniqueVendors = async () => {
+  try {
+    const vendors = await prisma.transaction.findMany({
+      select: { vendor: true },
+      distinct: ['vendor'],
+      orderBy: { vendor: 'asc' }
+    });
+    return vendors.map(v => v.vendor);
+  } catch (error) {
+    console.error('Error fetching unique vendors:', error);
+    throw new Error('Failed to fetch unique vendors');
+  }
+};
+
+// Get unique categories from database
+export const getUniqueCategories = async () => {
+  try {
+    const categories = await prisma.transaction.findMany({
+      select: { category: true },
+      distinct: ['category'],
+      orderBy: { category: 'asc' }
+    });
+    return categories.map(c => c.category);
+  } catch (error) {
+    console.error('Error fetching unique categories:', error);
+    throw new Error('Failed to fetch unique categories');
+  }
+};

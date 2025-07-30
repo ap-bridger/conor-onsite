@@ -5,6 +5,8 @@ import {
   updateTransactionCategory,
   updateTransactionStatus,
   sendInfoRequest,
+  getUniqueVendors,
+  getUniqueCategories
 } from "@/server/modules/transactions/api";
 import { createSchema, createYoga } from "graphql-yoga";
 
@@ -38,6 +40,8 @@ const { handleRequest } = createYoga({
       type Query {
         greetings: String
         transactions(status: String!): [Transaction!]!
+        getUniqueVendors: [String!]!
+        getUniqueCategories: [String!]!
       }
 
       type Mutation {
@@ -54,6 +58,8 @@ const { handleRequest } = createYoga({
       Query: {
         greetings,
         transactions,
+        getUniqueVendors,
+        getUniqueCategories,
       },
       Mutation: {
         updateTransactionVendor,
