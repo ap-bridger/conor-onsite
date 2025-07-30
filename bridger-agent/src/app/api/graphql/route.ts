@@ -1,5 +1,5 @@
 import { greetings } from "@/server/modules/greet/api";
-import { transactions } from "@/server/modules/transactions/api";
+import { transactions, updateTransactionVendor, updateTransactionCategory, updateTransactionStatus } from "@/server/modules/transactions/api";
 import { createSchema, createYoga } from "graphql-yoga";
 
 const { handleRequest } = createYoga({
@@ -23,15 +23,32 @@ const { handleRequest } = createYoga({
         vendor: String
       }
       
+      type MutationResponse {
+        success: Boolean!
+        message: String
+        transaction: Transaction
+      }
+      
       type Query {
         greetings: String
         transactions(status: String!): [Transaction!]!
+      }
+      
+      type Mutation {
+        updateTransactionVendor(id: String!, vendor: String!): MutationResponse!
+        updateTransactionCategory(id: String!, category: String!): MutationResponse!
+        updateTransactionStatus(id: String!, status: String!): MutationResponse!
       }
     `,
     resolvers: {
       Query: {
         greetings,
         transactions,
+      },
+      Mutation: {
+        updateTransactionVendor,
+        updateTransactionCategory,
+        updateTransactionStatus,
       },
     },
   }),

@@ -17,3 +17,86 @@ export const transactions = async (_: any, { status }: { status: string }) => {
     throw new Error('Failed to fetch transactions');
   }
 };
+
+export const updateTransactionVendor = async (_: any, { id, vendor }: { id: string; vendor: string }) => {
+  try {
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: { vendor },
+    });
+    
+    return {
+      success: true,
+      message: 'Vendor updated successfully',
+      transaction,
+    };
+  } catch (error) {
+    console.error('Error updating transaction vendor:', error);
+    return {
+      success: false,
+      message: 'Failed to update vendor',
+      transaction: null,
+    };
+  }
+};
+
+export const updateTransactionCategory = async (_: any, { id, category }: { id: string; category: string }) => {
+  try {
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: { category },
+    });
+    
+    return {
+      success: true,
+      message: 'Category updated successfully',
+      transaction,
+    };
+  } catch (error) {
+    console.error('Error updating transaction category:', error);
+    return {
+      success: false,
+      message: 'Failed to update category',
+      transaction: null,
+    };
+  }
+};
+
+export const updateTransactionStatus = async (_: any, { id, status }: { id: string; status: string }) => {
+  try {
+    // Validate status value
+    const validStatuses = [
+      'NEEDS_TO_BE_SENT_TO_CLIENT',
+      'APPROVED',
+      'EXCLUDED',
+      'AUTOCATEGORIZED',
+      'SENT_TO_CLIENT'
+    ];
+    
+    if (!validStatuses.includes(status)) {
+      return {
+        success: false,
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+        transaction: null,
+      };
+    }
+    
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: { status },
+    });
+    
+    return {
+      success: true,
+      message: 'Status updated successfully',
+      transaction,
+    };
+  } catch (error) {
+    console.error('Error updating transaction status:', error);
+    return {
+      success: false,
+      message: 'Failed to update status',
+      transaction: null,
+    };
+  }
+};
