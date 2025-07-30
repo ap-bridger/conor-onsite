@@ -4,6 +4,6 @@ export interface Transaction {
   description: string;
   vendor: string;
   category: string;
-  amount: number; // Negative for expenses, positive for income
-  comment: string;
+  amountCents: number; // Negative for expenses, positive for income
+  memo: string;
 }
