@@ -10,8 +10,8 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { TRANSACTIONS } from "./TransactionTable.api";
-import { useQuery } from "@apollo/client";
+import { SEND_INFO_REQUEST, TRANSACTIONS } from "./TransactionTable.api";
+import { useMutation, useQuery } from "@apollo/client";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Transaction } from "./types";
 import { formatCentsToDollars } from "@/lib/formatters";
@@ -51,6 +51,20 @@ export const RequestInfoModal = ({
     },
   });
   const transactions = data?.transactions || [];
+  const [sendInfoRequest, {}] = useMutation(SEND_INFO_REQUEST, {
+    refetchQueries: [TRANSACTIONS],
+  });
+
+  const onSend = () => {
+    sendInfoRequest({
+      variables: {
+        ids: transactions.map((transaction: Transaction) => transaction.id),
+      },
+      onError: () => alert("Error!"),
+      onCompleted: () => alert("Success!"),
+    });
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl">
       <ModalOverlay />
@@ -62,7 +76,7 @@ export const RequestInfoModal = ({
             <DataTable data={transactions} columns={columns} width="100%" />
             <Text>Add note to client</Text>
             <Textarea />
-            <Button onClick={() => alert("sent!")}>Send Request</Button>
+            <Button onClick={onSend}>Send Request</Button>
           </VStack>
         </ModalBody>
       </ModalContent>

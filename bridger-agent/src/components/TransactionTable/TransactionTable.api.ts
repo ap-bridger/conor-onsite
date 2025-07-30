@@ -14,3 +14,11 @@ export const TRANSACTIONS = gql(`
         }
     }
 `);
+
+export const SEND_INFO_REQUEST = gql(`
+    mutation SendInfoRequest($ids: [String!]!) {
+        sendInfoRequest(ids: $ids) {
+            id
+            status
+        }
+    }`);
