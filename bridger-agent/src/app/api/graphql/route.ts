@@ -20,6 +20,7 @@ const { handleRequest } = createYoga({
       # - EXCLUDED
       # - AUTOCATEGORIZED
       # - SENT_TO_CLIENT
+      # - UNCATEGORIZED
 
       type Transaction {
         id: String!
