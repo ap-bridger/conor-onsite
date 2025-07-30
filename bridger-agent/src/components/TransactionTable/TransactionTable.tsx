@@ -10,6 +10,7 @@ import {
   AUTOCATEGORIZED_TRANSACTIONS,
   SYNCED_TRANSACTIONS,
   NEEDS_ACTION_TRANSACTIONS,
+  UNCATEGORIZED_TRANSACTIONS,
   GET_UNIQUE_VENDORS, 
   GET_UNIQUE_CATEGORIES,
   UPDATE_TRANSACTION_VENDOR,
@@ -21,7 +22,7 @@ import { RequestInfoModal } from "./RequestInfoModal";
 import { Button, Textarea } from "@chakra-ui/react";
 import { formatCentsToDollars } from "@/lib/formatters";
 
-type TableView = "autocategorized" | "synced" | "needsAction";
+type TableView = "autocategorized" | "synced" | "needsAction" | "uncategorized";
 
 const columnHelper = createColumnHelper<Transaction>();
 
@@ -42,6 +43,11 @@ export function TransactionTable() {
   // Query for Needs Client Action transactions
   const { data: needsActionData, loading: needsActionLoading } = useQuery(NEEDS_ACTION_TRANSACTIONS, {
     skip: currentView !== "needsAction",
+  });
+
+  // Query for UnCategorized transactions
+  const { data: uncategorizedData, loading: uncategorizedLoading } = useQuery(UNCATEGORIZED_TRANSACTIONS, {
+    skip: currentView !== "uncategorized",
   });
 
   // Fetch unique vendors and categories from database
@@ -117,6 +123,8 @@ export function TransactionTable() {
         return syncedData?.transactions || [];
       case "needsAction":
         return needsActionData?.transactions || [];
+      case "uncategorized":
+        return uncategorizedData?.transactions || [];
       default:
         return [];
     }
@@ -130,6 +138,8 @@ export function TransactionTable() {
         return syncedLoading;
       case "needsAction":
         return needsActionLoading;
+      case "uncategorized":
+        return uncategorizedLoading;
       default:
         return false;
     }
@@ -146,6 +156,8 @@ export function TransactionTable() {
         return "Synced With Quickbooks";
       case "needsAction":
         return "Needs Client Action";
+      case "uncategorized":
+        return "UnCategorized";
       default:
         return "Transactions";
     }
@@ -222,6 +234,7 @@ export function TransactionTable() {
             status === 'EXCLUDED' ? 'bg-red-100 text-red-800' :
             status === 'AUTOCATEGORIZED' ? 'bg-blue-100 text-blue-800' :
             status === 'SENT_TO_CLIENT' ? 'bg-purple-100 text-purple-800' :
+            status === 'UNCATEGORIZED' ? 'bg-orange-100 text-orange-800' :
             'bg-gray-100 text-gray-800'
           }`}>
             {status}
@@ -305,6 +318,16 @@ export function TransactionTable() {
             }`}
           >
             Needs Client Action
+          </button>
+          <button
+            onClick={() => setCurrentView("uncategorized")}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              currentView === "uncategorized"
+                ? "bg-orange-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            UnCategorized
           </button>
         </div>
       </div>

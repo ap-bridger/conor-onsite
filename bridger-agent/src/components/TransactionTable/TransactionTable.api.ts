@@ -60,6 +60,21 @@ export const NEEDS_ACTION_TRANSACTIONS = gql(`
     }
 `);
 
+export const UNCATEGORIZED_TRANSACTIONS = gql(`
+    query UnCategorizedTransactions {
+        transactions(status: "UNCATEGORIZED") {
+            id
+            date
+            description
+            vendor
+            category
+            amountCents
+            status
+            memo
+        }
+    }
+`);
+
 export const SEND_INFO_REQUEST = gql(`
     mutation SendInfoRequest($ids: [String!]!) {
         sendInfoRequest(ids: $ids) {

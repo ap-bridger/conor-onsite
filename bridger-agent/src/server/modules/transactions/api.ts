@@ -86,6 +86,7 @@ export const updateTransactionStatus = async (
       "EXCLUDED",
       "AUTOCATEGORIZED",
       "SENT_TO_CLIENT",
+      "UNCATEGORIZED",
     ];
 
     if (!validStatuses.includes(status)) {
